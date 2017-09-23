@@ -142,10 +142,10 @@
 const unsigned long MIN_UPDATE_PERIOD = 2 * 60 * 1000;
 MyMessage msg(CHILD_ID_TRIPPED, V_TRIPPED);
 MyMessage wattMsg(CHILD_ID_CUSTOMERS, V_WATT);
-MyMessage whMsg(CHILD_ID_CUSTOMERS, V_KWH);
+MyMessage kwhMsg(CHILD_ID_CUSTOMERS, V_KWH);
 MyMessage pcMsg(CHILD_ID_CUSTOMERS, V_VAR1);
 double wh = 0;
-unsigned long pulseCount = 0;
+float pulseCount = 0;
 bool pcReceived = false;
 
 
@@ -215,9 +215,9 @@ void loop()
     lastTrippedTime = millis();
     wifi_set_sleep_type(LIGHT_SLEEP_T); // This + the delay lets the esp go to low power mode
     if (tripped) {
-      pulseCount++;
+      pulseCount += 0.5;
       if (pcReceived) {
-        send(whMsg.set(pulseCount / 2.0, 1));
+        send(kwhMsg.set(pulseCount, 1));
       } else {
         // No count received. Try requesting it again
         request(CHILD_ID_CUSTOMERS, V_VAR1);
@@ -231,7 +231,7 @@ void loop()
 void receive(const MyMessage & message)
 {
   if (message.type == V_VAR1) {
-    double gwPulseCount = message.getLong();
+    float gwPulseCount = message.getFloat();
     Serial.print("Received last pulse count from gw: ");
     Serial.println(gwPulseCount);
     Serial.print("Local pulse count was: ");
