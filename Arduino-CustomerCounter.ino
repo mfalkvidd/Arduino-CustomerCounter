@@ -137,15 +137,10 @@
 #include <MySensors.h>
 
 #define CHILD_ID_TRIPPED 0
-#define CHILD_ID_CUSTOMERS 1
+#define CHILD_ID_CUSTOMERS 2
 #define DIGITAL_INPUT_SENSOR D2
 const unsigned long MIN_UPDATE_PERIOD = 2 * 60 * 1000;
 MyMessage msg(CHILD_ID_TRIPPED, V_TRIPPED);
-MyMessage flowMsg(CHILD_ID_CUSTOMERS, V_FLOW);
-MyMessage volumeMsg(CHILD_ID_CUSTOMERS, V_VOLUME);
-MyMessage lastCounterMsg(CHILD_ID_CUSTOMERS, V_VAR1);
-bool pcReceived = false;
-unsigned long pulseCount = 0;
 
 #include <ESP8266WiFi.h>
 extern "C" { // For ESP sleep
@@ -184,15 +179,12 @@ void setup()
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   // Fetch last known pulse count value from gw
-  request(CHILD_ID_CUSTOMERS, V_VAR1);
-
 }
 
 void presentation()
 {
   sendSketchInfo("Motion Sensor", "1.1");
   present(CHILD_ID_TRIPPED, S_MOTION);
-  present(CHILD_ID_CUSTOMERS, S_WATER);
 }
 
 
@@ -212,31 +204,8 @@ void loop()
     send(msg.set(tripped ? "1" : "0")); // Send tripped value to gw
     lastTrippedTime = millis();
     wifi_set_sleep_type(LIGHT_SLEEP_T); // This + the delay lets the esp go to low power mode
-    if (!pcReceived) {
-      //Last Pulsecount not yet received from controller, request it again
-      request(CHILD_ID_CUSTOMERS, V_VAR1);
-      return;
-    }
-    if (tripped) {
-      pulseCount++;
-      send(flowMsg.set(1));
-    }
-    else {
-      send(flowMsg.set(0));
-    }
   }
   ArduinoOTA.handle();
   delay(100);
-}
-
-void receive(const MyMessage & message)
-{
-  if (message.type == V_VAR1) {
-    unsigned long gwPulseCount = message.getULong();
-    pulseCount += gwPulseCount;
-    Serial.print("Received last pulse count from gw:");
-    Serial.println(pulseCount);
-    pcReceived = true;
-  }
 }
 
