@@ -137,7 +137,7 @@
 #include <MySensors.h>
 
 #define CHILD_ID_TRIPPED 0
-#define CHILD_ID_CUSTOMERS 2
+#define CHILD_ID_CUSTOMERS 3
 #define DIGITAL_INPUT_SENSOR D2
 const unsigned long MIN_UPDATE_PERIOD = 2 * 60 * 1000;
 MyMessage msg(CHILD_ID_TRIPPED, V_TRIPPED);
@@ -217,7 +217,7 @@ void loop()
     if (tripped) {
       pulseCount += 0.5;
       if (pcReceived) {
-        send(kwhMsg.set(pulseCount, 1));
+        send(kwhMsg.set(pulseCount/1000.0, 4));
       } else {
         // No count received. Try requesting it again
         request(CHILD_ID_CUSTOMERS, V_VAR1);
