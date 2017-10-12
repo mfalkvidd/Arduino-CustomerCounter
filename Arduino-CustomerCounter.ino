@@ -128,6 +128,8 @@
 #define MY_DEFAULT_RX_LED_PIN  16  // Receive led pin
 #define MY_DEFAULT_TX_LED_PIN  16  // the PCB, on board LED
 
+#define WIFI_POWER_DBM 10 // 20.5 is default
+
 #if defined(MY_USE_UDP)
 #include <WiFiUDP.h>
 #else
@@ -156,6 +158,7 @@ extern "C" { // For ESP sleep
 
 void setup()
 {
+  WiFi.setOutputPower(WIFI_POWER_DBM); // Lower power to avoid interfering with the PIR
   request(CHILD_ID_CUSTOMERS, V_VAR1);
   pinMode(DIGITAL_INPUT_SENSOR, INPUT);
   ArduinoOTA.setHostname(MY_ESP8266_HOSTNAME);
