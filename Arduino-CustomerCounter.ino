@@ -185,6 +185,7 @@ void setup()
       Serial.println("End Failed");
     }
   });
+  ArduinoOTA.setPassword((const char *)OTA_PASSWORD);
   ArduinoOTA.begin();
   Serial.println("Ready");
   Serial.print("IP address: ");
