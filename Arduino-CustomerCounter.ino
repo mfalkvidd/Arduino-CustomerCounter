@@ -141,7 +141,7 @@
 #define CHILD_ID_TRIPPED 0
 #define CHILD_ID_CUSTOMERS 3
 #define DIGITAL_INPUT_SENSOR D2
-const unsigned long MIN_UPDATE_PERIOD = 2 * 60 * 1000;
+const unsigned long MIN_UPDATE_PERIOD = 1 * 60 * 1000;
 MyMessage msg(CHILD_ID_TRIPPED, V_TRIPPED);
 MyMessage wattMsg(CHILD_ID_CUSTOMERS, V_WATT);
 MyMessage kwhMsg(CHILD_ID_CUSTOMERS, V_KWH);
